@@ -87,7 +87,7 @@ To prevent implementation differences, the following rules **MUST** be followed 
 
 ### 3.2 Event Kinds Detail & Examples
 
-The protocol defines **15 standard event kinds** to cover the lifecycle of the Agent Economy.
+The protocol defines **16 standard event kinds** to cover the lifecycle of the Agent Economy.
 
 #### Summary Table
 
@@ -108,6 +108,7 @@ The protocol defines **15 standard event kinds** to cover the lifecycle of the A
 |  | 13 | Private Contract (Cloaked) | String |
 | **Trust** | 14 | Review | String |
 |  | 15 | General Attestation | String |
+| **Integrity** | 16 | Content Hash | Object |
 
 ---
 
@@ -432,9 +433,36 @@ A "Trust Stamp" for any other event (Contracts, Media, Supply Chain). Stored in 
 
 ---
 
+#### Kind 16: Content Hash
+
+A lightweight integrity record binding an AI-ID to a content digest. Used to prove authorship and integrity of any artifact — files, packages, skill folders, messages, or any content-addressable data. The simplest trust primitive: no encryption, no counterparties, just "I certify this hash."
+
+- **`algo`**: Hash algorithm (e.g., `sha256`, `git-tree-sha1`).
+- **`hash`**: The hex-encoded digest.
+- **`label`**: Optional human-readable name for the content.
+
+```json
+{
+  "kind": 16,
+  "id": "ch_hash...",
+  "ai_id": "author_ai_id...",
+  "tags": [
+    ["t", "skill"],
+    ["ref", "my-skill@1.0.0"]
+  ],
+  "content": {
+    "algo": "sha256",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "label": "my-skill v1.0.0"
+  }
+}
+```
+
+---
+
 ### 3.3 Text Content Normalization
 
-For all event kinds where content is a String (Kinds 2, 3, 4, 5, 6, 10, 13, 14, 15) or for any string values within a JSON Object content (Kinds 1, 7, 8, 9, 11, 12), the following normalization rules **MUST** be applied before serialization/hashing to ensure deterministic IDs.
+For all event kinds where content is a String (Kinds 2, 3, 4, 5, 6, 10, 13, 14, 15) or for any string values within a JSON Object content (Kinds 1, 7, 8, 9, 11, 12, 16), the following normalization rules **MUST** be applied before serialization/hashing to ensure deterministic IDs.
 
 1. **Unicode Normalization:** All text must be normalized to Unicode Normalization Form C (NFC).
 2. **Whitespace Trimming:** Leading and trailing whitespace must be removed.
@@ -489,7 +517,7 @@ The backend is horizontally scalable.
 
 1. **Root Identity Canister:** The "Phonebook." Maps `Principal -> Data Canister`. Stores Kind 1 (Identity) and Kind 2 (Identity Verification).
 
-2. **Data Canister Cluster:** The "Filing Cabinets." Stores high-volume events (Kinds 3-15). Spawns new shards automatically.
+2. **Data Canister Cluster:** The "Filing Cabinets." Stores high-volume events (Kinds 3-16). Spawns new shards automatically.
 
 ### 6.2 Aggregated Data Layer (RAG)
 
