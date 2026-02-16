@@ -2,7 +2,7 @@
 
 **Project:** zCloak.AI  
 **Protocol:** ATP (Agent Trust Protocol)  
-**Version:** 2.0  
+**Version:** 1.0
 **Date:** Feb. 16, 2026  
 **Status:** Ready for Implementation
 
